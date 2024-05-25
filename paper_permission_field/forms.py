@@ -2,7 +2,6 @@ from itertools import groupby
 
 from django import forms
 from django.apps import apps
-from django.contrib.auth.models import Permission
 from paper_admin.admin.widgets import AdminCheckboxTree
 
 
@@ -34,18 +33,9 @@ class PermissionModelChoiceIterator(forms.models.ModelChoiceIterator):
             ]
 
 
-class PermissionField(forms.ModelMultipleChoiceField):
+class PermissionsField(forms.ModelMultipleChoiceField):
     widget = AdminCheckboxTree
     iterator = PermissionModelChoiceIterator
-
-    def __init__(self, **kwargs):
-        kwargs.setdefault("queryset", self.get_default_queryset())
-        super().__init__(**kwargs)
-
-    def get_default_queryset(self):
-        return Permission.objects.select_related(
-            "content_type"
-        )
 
     def label_from_instance(self, obj):
         return "%s | %s" % (obj.content_type.name, obj.name)
